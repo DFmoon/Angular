@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a4">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+
+</head>
+	<style>
+		body{font-size:12px;}
+		ul{list-style-type:none;width:400px;margin:0px;padding:0px;}
+		ul li{float:left;padding:5px 0px;}
+		ul li span{width:50px;float:left; padding:0px 10px;}
+		ul .odd{color:#9F3;}
+		ul .even{color:#F9F;}
+		ul .bold{font-weight:bold;}
+		ul .focus{background-color:#CCF;}
+	</style>
+<body>
+	<div ng-controller="c4_1">
+    	<ul>
+        	<!--通过赋值给元素添加样式-->
+        	<li ng-class="{{bold}}">
+            	<span>序号</span>
+                <span>姓名</span>
+                <span>性别</span>
+                <span>是否首条</span>
+                <span>是否尾条</span>
+            </li>
+            <!--直接给元素添加样式以及通过添加函数添加样式-->
+            <li ng-class-odd="'odd'"		
+            	ng-class-even="'even'"
+            	ng-repeat="stu in data"
+                ng-click='li_click($index)'
+                ng-class='{focus:$index==focus}'>
+            	<span>{{$index+1}}</span>
+                <span>{{stu.name}}</span>
+                <span>{{stu.sex}}</span>
+                <span>{{$first?'是':'否'}}</span>
+                <span>{{$last?'是':'否'}}</span>
+            </li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+		var a4=angular.module('a4',[]);
+		a4.controller('c4_1',['$scope',function($scope){		
+			$scope.bold="bold";
+			$scope.li_click=function(i){$scope.focus=i};
+			$scope.data=[
+			{name:"aa",sex:"女"},
+			{name:"bb",sex:"女"},
+			{name:"cc",sex:"男"},
+			{name:"dd",sex:"男"}
+			];
+		}]);
+	</script>
+</body>
+</html>

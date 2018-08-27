@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a14">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+<style>
+	body{font-size:16px;}
+	.show{background-color:#FCC;padding:8px;width:260px;margin:10px 0px;}
+</style>
+</head>
+
+<body>
+	<div ng-controller="c14_1">
+    	<div class="show">编号：{{stu.code}}</div>
+        <div class="show">姓名：{{stu.name}}</div>
+        <div class="show">分数：{{stu.score}}</div>
+        <button ng-click="reset()">重置</button>
+    </div>
+    <div ng-controller="c14_2">
+    	<div class="show">编号：{{stu.code}}</div>
+        <div class="show">姓名：{{stu.name}}</div>
+        <div class="show">分数：{{stu.score}}</div>
+    </div>
+    <script type="text/javascript">
+		function student(json){			//定义student对象，通过传入的json参数调用angular中的extend方法初始化对象属性
+			angular.extend(this,json);
+			this.reset=function(){
+				this.code=1000;
+				this.name="aa";
+				this.score=0;
+			};
+		}
+		student.create=function(){		//添加create方法，用于创建新的student对象，并在实例中重置自己的内容
+			return new student({code:1001,name:"bb",score:98});
+		};
+		angular.module('a14',[])
+			.factory('$student',function(){return{create:student.create}})		//创建名为$student的服务,并返回create函数
+			.controller('c14_1',function($scope,$student){
+				$scope.stu=$student.create();		//得到的是一个student对象
+				$scope.reset=function(){$scope.stu.reset();};
+			})
+			.controller('c14_2',function($scope,$student){$scope.stu=$student.create();});
+	</script>
+</body>
+</html>

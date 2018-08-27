@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a7">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+<style>
+	body{font-size:16px;}
+	ul{list-style-type:none;width:400px;margin:0px;padding:0px;}
+	ul li{float:left;padding:5px 0px;}
+	ul li span{width:50px;float:left;padding:0px 10px;}
+	ul .odd{color:#066;}
+	ul .even{color:#639;}
+	ul .bold{font-weight:bold;}
+	ul .focus{background-color:#9F9;}
+</style>
+</head>
+
+<body>
+	<div ng-controller="c7_1">
+    	<ul>
+        	<li ng-class="{{bold}}">
+            	<span>序号</span>
+                <!--通过单击改变属性title和desc的值，desc为0表示升序排列-->
+                <span ng-click="title='name';desc=!desc">姓名</span>
+                <span ng-click="title='sex';desc=!desc">性别</span>
+                <span ng-click="title='age';desc=!desc">年龄</span>
+                <span ng-click="title='score';desc=!desc">分数</span>
+            </li>
+            <li ng-repeat="stu in data|orderBy:title:desc" ng-class-odd="'odd'" ng-class-even="'even'">
+            	<span>{{$index+1}}</span>
+                <span>{{stu.name}}</span>
+                <span>{{stu.sex}}</span>
+                <span>{{stu.age}}</span>
+                <span>{{stu.score}}</span>
+            </li>
+        </ul>
+    </div>
+	<script type="text/javascript">
+		var a7=angular.module('a7',[]);
+		a7.controller('c7_1',['$scope',function($scope){
+			$scope.bold="bold";
+			$scope.title="name";
+			$scope.desc=0;
+			$scope.data=[{name:"aa",sex:"女",age:18,score:89},{name:"bb",sex:"男",age:20,score:94},
+						{name:"cc",sex:"男",age:19,score:70},{name:"dd",sex:"女",age:17,score:90}];
+		}]);
+	</script>
+</body>
+</html>
+

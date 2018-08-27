@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a8">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+<style>
+	body{font-size:16px;}
+	.show{border:solid 1px #03C;padding:8px;width:260px;margin:10px 0px;}
+</style>
+</head>
+
+<body>
+	<div ng-controller="c8_1">
+    	<div class="{{cls}}">{{text}}</div>
+        <button ng-click="onClick(1)">早上</button>
+        <button ng-click="onClick(2)">上午</button>
+        <button ng-click="onClick(3)">下午</button>
+        <button ng-click="onClick(4)">晚上</button>
+    </div>
+	<script type="text/javascript">
+		var a8=angular.module('a8',[]);
+		/*通过config函数的$provide服务中的provider、factory、value、service方法创建自定义的依赖注入服务对象$show1、$show2、$show3、$show4
+		这几个方法的功能相同，即返回用户输入的字符内容。*/
+		<!--创建服务的第一种方法：使用内置的$provide服务中的方法定义服务-->
+		a8.config(function($provide){
+			$provide.provider('$show1',function(){
+				this.$get=function(){
+					return{val:function(name){return name;}}
+				};
+			});
+		});
+		a8.config(function($provide){
+			$provide.factory('$show2',function(){
+				return{val:function(name){return name;}}
+			});
+		});
+		a8.config(function($provide){
+			$provide.value('$show3',function(name){return name;});
+		});
+		a8.config(function($provide){
+			$provide.service('$show4',function(){
+				return{val:function(name){return name;}}
+			});
+		});
+		/*通过config函数的$controllerProvider服务的register方法来创建控制器，这是a8.controller(...)的执行本质*/
+		a8.config(function($controllerProvider){
+			$controllerProvider.register('c8_1',function($scope,$show1,$show2,$show3,$show4){	//将定义好的对象变量作为依赖注入变量调用
+				$scope.cls="";
+				$scope.onClick=function(t){
+					$scope.cls="show";
+					switch(t){
+						case 1:$scope.text=$show1.val("早上好！");break;
+						case 2:$scope.text=$show2.val("上午好！");break;
+						case 3:$scope.text=$show3("下午好！");break;			//注意，使用value方法创建的对象变量赋值和其他几个不同
+						case 4:$scope.text=$show4.val("晚上好！");break;
+					}
+				};
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a9">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div ng-controller="c9_1">
+    
+    </div>
+    <script type="text/javascript">
+		var a9=angular.module('a9',[])
+			.factory('$custom',function(){				//创建一个名为$custom的服务,是定义服务的第二种方法，直接调用模块的方法。
+				return{print:function(msg){console.log(msg);}};
+			});
+		var injector=angular.injector(['a9','ng']);		//创建injector对象
+		var has=injector.has('$custom');				//调用injector的has方法，判断是否存在服务$custom
+		console.log(has);
+		if(has){
+			var custom=injector.get('$custom');			//调用get方法获取服务，并调用其打印方法
+			custom.print("uihsdcjksncjk");
+		}
+		
+		var fun=function($custom){						//自定义一个fun函数
+			$custom.print("函数执行成功！");				//调用invoke方法执行函数
+		};
+		injector.invoke(fun);
+		a9.controller('c9_1',['$scope','$custom',function($scope,$custom){}]);	//行内式注入
+	</script>
+</body>
+</html>
