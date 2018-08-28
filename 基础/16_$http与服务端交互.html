@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="a16">
+	<head>
+		<meta charset="utf-8" />
+		<title>$http方式和服务端交互</title>
+		<script type="text/javascript" src="angular.min.js"></script>
+	</head>
+	<!--注意，该文件应放在tomcat中-->
+	<body>
+		<div ng-controller="c1">
+			<div>
+				<div>POST返回的结果是：{{result}}</div>
+				<button ng-click="onclick()">发送</button>
+			</div>
+		</div>
+		<script type="text/javascript">
+			angular.module("a16",[])
+				.config(function($httpProvider){		//重置发送数据时的默认函数和属性
+					$httpProvider.defaults.transformRequest=function(obj){
+						var arrStr=[];
+						for(var p in obj){
+							arrStr.push(encodeURIComponent(p)+"="+encodeURIComponent(obj[p]));
+						}
+						return arrStr.join("&");
+					}
+					$httpProvider.defaults.headers.post={
+						'Content-Type':'application/x-www-form-urlencoded'
+					}
+				})
+				.controller('c1',function($scope,$http){
+					var postData={name:"aa"}
+					$scope.onclick=function(){
+						$http.post('16_json.php',postData)
+							 .success(function(data,status,headers,config){
+							 	$scope.result=data;
+							 });
+					}
+				});
+		</script>
+	</body>
+</html>

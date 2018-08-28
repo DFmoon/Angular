@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8" />
 		<title>传统的ajax方式和服务端交互</title>
 	</head>
+	<!--注意，该文件应放在tomcat中-->
 	<body>
 		<div>
 			<ul id="stu">
@@ -22,19 +23,18 @@
 					if(xhr.readyState==4){				//返回4表示请求成功
 						if(xhr.status==200){
 							var HTML="";
-							var data=eval("("+xhr.responseText+")");	//返回的是一个加密后的json对象，需进行转码
+							var data=JSON.parse(xhr.responseText);//返回的是一个json对象，转换后得到的data是数组
+							console.log(data);
 							for(var i=0;i<data.length;i++){
-								console.log("qq");
 								HTML+="<li><span>"+data[i].Code+"</span>";
 								HTML+="<span>"+data[i].Name+"</span>";
 								HTML+="<span>"+data[i].Score+"</span></li>";
 							}
-							document.getElementById("stu").innerHtml=HTML;
+							document.getElementById("stu").innerHTML=HTML;
 						}
 					}
 				}
-				xhr.open("GET","15_ajax.php",true);
-				console.log("bb");
+				xhr.open("GET","15_json.text",true);
 				xhr.send();
 			})();
 		</script>
