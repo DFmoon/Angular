@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html ng-app="a19">
+<head>
+<meta charset=utf-8" />
+<title>创建指令</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<df-hello></df-hello>			<!--以标签的形式使用-->
+	<div df-hello></div>			<!--以属性的形式使用-->
+	<div class="df-hello"></div><br>	<!--以类的形式使用-->
+
+	<df-tplfile></df-tplfile>
+	<df-tplscript>我是原有内容</df-tplscript><div>{{content}}</div>
+	<df-tplscript ng-transclude>我是原有内容</df-tplscript><br>
+	
+	<div ng-controller="c1">
+		<df-a>
+			<df-b>
+				{{tip}}
+			</df-b>
+		</df-a>
+	</div><br>
+	
+
+	<input type="text" ng-model="message" placeholder="请输入提示内容" />
+	<df-message>固定</df-message><br>
+
+	<div ng-controller="c2">
+		父作用域<br>
+		姓名：<input type="text" ng-model="text_name" placeholder="输入姓名" /><br>
+		年龄：<input type="text" ng-model="text_age" placeholder="输入年龄" />
+		<div>{{tip}}</div>
+		<df-json a-attr="{{text_name}}" b-attr="text_age" reset="reSet()">重置</df-json>
+	</div><br>
+
+
+	<!--创建script元素的模板-->
+	<script type="text/ng-template" id="tp1">
+		<h1>模板内容来源于script元素</h1>	
+	</script>
+
+	<script type="text/ng-template" id=tp2>
+		<div>{{message}}</div>
+		<button ng-transclude></button><br>
+	</script>
+
+	<script type="text/ng-template" id="tp3">
+		子作用域<br>
+		<span>姓名：{{name}}</span>
+		<span>年龄：{{age}}</span><br>
+		<button ng-transclude></button>
+	</script>
+
+    <script type="text/javascript">
+		var a19=angular.module('a19',[]);
+
+		a19.directive('dfHello',function(){		//创建一个指令，注意指令的命名！！！
+	   		return{
+	   			restrict:'EAC',		//该属性表示以何种方式用于HTML中，EACM分别代表标签、属性、类、注释，可组合使用
+	   			template:'<h3>hello,angular!</h3>',		//在编译和连接后生成的HTML代码块
+	   		};
+	   	});
+
+		a19.directive('dfTplfile',function(){
+	   		return{
+	   			restrict:'E',
+	   			templateUrl:'19_1.html',	//指定一个模板页，该属性不能和template属性一起使用
+	   										//指定外部文件时注意必须放在服务器上！！！否则不会访问
+	   		};
+	   	}).directive('dfTplscript',function(){
+	   		return{
+	   			restrict:'E',
+	   			templateUrl:'tp1',	//指定一个script元素作为模板页
+	   			replace:true,		//默认为false，该属性为true时，表示用模板中的内容替换指令标记！！！
+	   			transclude:true,	//默认为false，设置为true后，可通过ng-transclude指令用原有内容替换指令，即实现反替换
+	   			/*link属性的值是一个函数，scope为指令所在的作用域，IEle包含了元素操作的API，相当于压缩版的jQuery，用法同jQuery，
+	   			iAttrs表示指令元素的属性集合。*/
+	   			link:function(scope,iEle,iAttrs){
+	   					iEle.bind('click',function(){	//给当前的元素，即替换原有内容后的script元素绑定一个事件
+	   						scope.$apply(function(){	//$apply用于执行完这一方法中的函数后重新渲染页面视图，将content显示出来
+	   							scope.content='点击后的内容';
+	   						})
+	   						iAttrs.$$element[0].disabled=true;	//$$element表示与属性对应的元素的集合，$$element[0]就是点击的元素
+	   					});
+	   				}
+	   		}
+	   	});
+
+	   	/*conpile属性返回一个函数或一个对象，返回函数时，函数名为post，返回对象时，包含pre和post两个方法函数,
+	   	compile执行的顺序：父元素compile，子元素compile，父元素pre，子元素pre，父元素post，子元素post*/
+	   	a19.controller('c1',function($scope){
+	   		$scope.tip="跟踪compile的执行过程";
+	   	}).directive('dfA',function(){
+	   		return{
+	   			restrict:'E',
+	   			compile:function(tEle,tAttrs,trans){
+							console.log('正在编译A指令');
+							return{
+								pre:function(scope,iEle,iAttrs){console.log('正在执行A指令中的pre函数');},
+								post:function(scope,iEle,iAttrs){console.log('正在执行A指令中的post函数');}
+							}	   					
+	   					}
+	   		};
+	   	}).directive('dfB',function(){
+	   		return{
+	   			restrict:'E',
+	   			compile:function(tEle,tAttrs,trans){
+							console.log('正在编译B指令');
+							return{
+								pre:function(scope,iEle,iAttrs){console.log('正在执行B指令中的pre函数');},
+								post:function(scope,iEle,iAttrs){console.log('正在执行B指令中的post函数');}
+							}	   					
+	   					}
+	   		};
+	   	})
+
+	   	/*scope有两种类型，一种是布尔值，一种是json对象。*/
+	   	/*scope为布尔值时，默认为false，为true时表明创建了一个独立的子作用域，独立是指父作用域的变量会影响子作用域，而反之则不会，
+	   	但如果某一属性，这里是message的值，被子作用域重置了，则父作用域就不能再影响它的内容了。
+	   	该属性可避免指令中局部作用于对于全局作用域或外部作用域的污染，若一个元素中绑定了多个拥有子作用域的指令，则只有指令模板中的根元素才能获取新的作用域（子作用域为指令中的作用域，父作用域为指令元素所在的作用域）*/
+	   	a19.directive('dfMessage',function(){
+	   		return{
+	   			restrict:'E',
+	   			templateUrl:'tp2',
+	   			transclude:true,
+	   			scope:true,
+	   			link:function(scope,iEle,iAttrs){
+	   					iEle.bind('click',function(){
+	   						scope.$apply(function(){
+	   							scope.message='单击后的按钮值';
+	   						});
+	   					});
+	   				}
+	   		}
+	   	});
+	   	/*scope为json对象时，子作用域和父作用域完全独立，子作用域若要添加属性，须通过link属性中函数的scope对象实现；
+	   	若要在子作用域中绑定或调用父作用域的属性及方法，则应在json对象中添加绑定策略。
+	   	绑定策略：1.@绑定：子作用域重置属性前后，父作用域的变量会影响子作用域，而反之则不会，和scope：true的区别；
+	   			 2.=绑定：父子同步，完全共享；
+	   			 3.&绑定：在独立的子作用域中直接调用父作用域的方法，避免重复编码*/
+	   	a19.controller('c2',function($scope){
+	   		$scope.reSet=function(){
+	   			$scope.tip="姓名和年龄重置成功";
+	   		}
+	   	}).directive('dfJson',function(){
+	   		return{
+	   			restrict:'EAC',
+	   			templateUrl:'tp3',
+	   			transclude:true,
+	   			scope:{name:'@aAttr',age:'=bAttr',reSet:'&reset'},		//将子作用域的name、age、reSet绑定到父作用域（绑定方式不同）
+	   			link:function(scope,iEle,iAttrs){
+	   					iEle.bind('click',function(){
+	   						scope.$apply(function(){
+	   							scope.reSet();
+	   							scope.name='aa';
+	   							scope.age='32';
+	   						});
+	   					});
+	   				}
+	   		};
+	   	});
+
+
+
+	</script>
+	
+</body>
+</html>
