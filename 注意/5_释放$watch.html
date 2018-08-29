@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html ng-app="a5">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<script type="text/javascript" src="angular.min.js"></script>
+</head>
+<body>
+	<!--angular的双向绑定依赖于大量$watch监测函数，为保证性能，需释放多余的$watch函数-->
+	<div ng-controller="c1">
+		<input type="text" ng-model="tip">
+		<div>input变化了{{num}}次</div>
+		<button ng-click="stopWatch()">停止监测</button>
+	</div>
+	<script type="text/javascript">
+		angular.module('a5',[])
+		.controller('c1',function($scope) {
+			$scope.num=0;
+			//$watch方法的第一个参数为需要监测的表达式，第二个参数为监测到变化时执行的函数。其返回值是一个释放$watch绑定unbind函数
+			$scope.stopWatch=$scope.$watch('tip',function(newVal,oldVal){
+			//由于首次调用时newVal和oldVal都是undefined，两者相等，所以调用return退出函数，不进行累加
+				if(newVal==oldVal){return;}		//若取消该语句，则首次加载后，num的初始值为1
+				$scope.num++;
+			})
+		})
+	</script>
+</body>
+</html>
+		

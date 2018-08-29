@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html ng-app="a4">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<script type="text/javascript" src="angular.min.js"></script>
+</head>
+<body>
+	<!--event.propagation-->
+	<div ng-controller="c1">
+		<div ng-click="click('父级',$event)">
+			在按钮的单击事件中阻止冒泡现象
+			<br>
+			<input type="checkbox" ng-click="change($event)" ng-model="stopPropagation" />是否阻止冒泡？
+			<br><br>
+			<button ng-click="click('按钮',$event)">点击</button>
+
+		</div>
+	</div>
+	<script type="text/javascript">
+		angular.module('a4',[])
+		.controller('c1',function($scope) {
+			$scope.click=function(name,$event){
+				console.log(name+"被触发");
+				if($scope.stopPropagation){		//选中复选框后，冒泡被阻止
+					$event.stopPropagation();
+				}
+			};
+			//复选框本身也是子元素，也会冒泡，所以通过change方法取消复选框的冒泡
+			$scope.change=function($event){
+				$event.stopPropagation();
+			};
+		})
+	</script>
+</body>
+</html>
+		

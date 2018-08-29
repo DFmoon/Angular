@@ -1,3 +1,37 @@
-<html>
-	
+<!DOCTYPE html>
+<html ng-app="a1">
+<head>
+	<meta charset="utf-8" />
+	<title>element控制DOM</title>
+	<script type="text/javascript" src="angular.min.js"></script>
+</head>
+<body>
+	<!--element方法可以动态创建元素，且在创建过程中绑定事件，能够代替jQuery，这些功能都包含在jQLite库中-->
+	<div ng-controller="c1" id="ctrl">
+		<button ng-click="add()">添加元素</button>
+		<button ng-click="del()">删除元素</button>
+	</div>
+	<script type="text/javascript">
+		angular.module('a1',[])
+		//注入compile服务目的是初始化相关依赖，并对生成的jQuery对象template进行编译
+		.controller('c1',function($scope,$compile){
+			$scope.hello="hello,angular!";
+			$scope.log=function(){
+				console.log('动态添加方法');
+			};
+			var html="<div ng-click='log()'>{{hello}}</div>";
+			var template=angular.element(html);			//得到的template是一个jQuery对象
+			var newHtml=$compile(template)($scope);		//编译jQuery对象
+			$scope.add=function(){
+				angular.element(document.getElementById('ctrl')).append(newHtml);
+			};
+			$scope.del=function(){
+				if(newHtml){
+					newHtml.remove();
+				}
+			};
+		});
+
+	</script>
+</body>
 </html>

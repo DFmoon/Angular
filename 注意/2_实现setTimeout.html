@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app="a2">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<script type="text/javascript" src="angular.min.js"></script>
+</head>
+<body>
+	<!---->
+	<div ng-controller="c1">
+		<p>{{tip}}</p>
+	</div>
+	<script type="text/javascript">
+		angular.module('a2',[])
+		.controller('c1',function($scope,$timeout) {
+			$scope.tip="hello,angular!";
+			//直接调用setTimeout方法是错误的，因为该方法并不是angular中的方法，
+			//angular中大部分操作之后的效果都由$apply方法自动完成，但调用非angular方法后，$apply将找不到对应属性，无法完成操作效果
+			//setTimeout(function(){$scope.tip='欢迎来到angular世界！';},3000);
+			//如果在angular中调用非angular方法，则需手动调用$apply
+			setTimeout(function(){
+				$scope.$apply(function(){
+					$scope.tip='欢迎来到angular世界！';
+				});
+			},3000);
+			//直接调用$timeout方法，该方法功能同setTimeout
+			//$timeout(function(){$scope.tip='欢迎来到angular世界！';},3000);
+		})
+	</script>
+</body>
+</html>
