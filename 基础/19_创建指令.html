@@ -7,14 +7,18 @@
 </head>
 
 <body>
+
+	<!--restrict和template-->
 	<df-hello></df-hello>			<!--以标签的形式使用-->
 	<div df-hello></div>			<!--以属性的形式使用-->
 	<div class="df-hello"></div><br>	<!--以类的形式使用-->
-
+	
+	<!--templateUrl、transclude和link-->
 	<df-tplfile></df-tplfile>
 	<df-tplscript>我是原有内容</df-tplscript><div>{{content}}</div>
 	<df-tplscript ng-transclude>我是原有内容</df-tplscript><br>
 	
+	<!--compile-->
 	<div ng-controller="c1">
 		<df-a>
 			<df-b>
@@ -23,10 +27,10 @@
 		</df-a>
 	</div><br>
 	
-
+	<!--scope布尔值-->
 	<input type="text" ng-model="message" placeholder="请输入提示内容" />
 	<df-message>固定</df-message><br>
-
+	<!--scopeJSON对象-->
 	<div ng-controller="c2">
 		父作用域<br>
 		姓名：<input type="text" ng-model="text_name" placeholder="输入姓名" /><br>
@@ -35,6 +39,14 @@
 		<df-json a-attr="{{text_name}}" b-attr="text_age" reset="reSet()">重置</df-json>
 	</div><br>
 
+	<!--require和controller-->
+	<df-parent>
+		<div>{{p}}</div>
+		<df-child>
+			<div>{{c}}</div>
+		</df-child>
+		<button ng-click="click()">换位</button>
+	</df-parent>
 
 	<!--创建script元素的模板-->
 	<script type="text/ng-template" id="tp1">
@@ -56,6 +68,7 @@
     <script type="text/javascript">
 		var a19=angular.module('a19',[]);
 
+		//restrict和template
 		a19.directive('dfHello',function(){		//创建一个指令，注意指令的命名！！！
 	   		return{
 	   			restrict:'EAC',		//该属性表示以何种方式用于HTML中，EACM分别代表标签、属性、类、注释，可组合使用
@@ -63,6 +76,7 @@
 	   		};
 	   	});
 
+		//templateUrl、transclude和link
 		a19.directive('dfTplfile',function(){
 	   		return{
 	   			restrict:'E',
@@ -88,6 +102,7 @@
 	   		}
 	   	});
 
+	   	//compile
 	   	/*conpile属性返回一个函数或一个对象，返回函数时，函数名为post，返回对象时，包含pre和post两个方法函数,
 	   	compile执行的顺序：父元素compile，子元素compile，父元素pre，子元素pre，父元素post，子元素post*/
 	   	a19.controller('c1',function($scope){
@@ -116,6 +131,7 @@
 	   		};
 	   	})
 
+	   	//scope
 	   	/*scope有两种类型，一种是布尔值，一种是json对象。*/
 	   	/*scope为布尔值时，默认为false，为true时表明创建了一个独立的子作用域，独立是指父作用域的变量会影响子作用域，而反之则不会，
 	   	但如果某一属性，这里是message的值，被子作用域重置了，则父作用域就不能再影响它的内容了。
@@ -162,6 +178,32 @@
 	   		};
 	   	});
 
+	   	//require和controller
+	   	/*以下两个属性结合使用，连通父、子作用域，用于多个指令元素的嵌套。*/
+	   	a19.directive('dfChild',function(){
+	   		return{
+	   			restrict:"EAC",
+	   			require:'^?dfParent',		//通过require指定要寻找的父元素指令
+	   			link:function(scope,iEle,iAttrs,ctrl){		//通过link的第四个参数访问父元素指令的controller中定义的方法
+	   				scope.c="阳光正好！";	//给自身的c属性赋值
+	   				ctrl.addChild(scope);	//将自身scope对象作为实参传递给父元素指令
+	   			},
+	   		};
+	   	}).directive('dfParent',function(){
+	   		return{
+	   			restrict:"EAC",
+	   			controller:function($scope,$compile,$http){
+					this.addChild=function(cscope){			//构造函数中接收来自子元素指令的scope对象
+						$scope.p="今天天气真好！";			//给自身的P属性赋值
+						$scope.click=function(){			//click函数中调用子元素指令的c属性
+							$scope.temp=$scope.p;
+							$scope.p=cscope.c;
+							cscope.c=$scope.temp;
+						};
+					}
+			   },
+	   		};
+	   	})
 
 
 	</script>

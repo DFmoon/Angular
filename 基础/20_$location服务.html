@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a20">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+</head>
+<!--注意，需放置到tomcat-->
+<body>
+	<div ng-controller="c1">
+		<div>绝对地址：{{absUrl}}</div>
+		<div>协议名称：{{protocol}}</div>
+		<div>请求主机：{{host}}</div>
+		<div>请求端口：{{port}}</div>
+
+		<div>页面地址：{{url}}</div><button ng-click="click(1)">修改</button>
+		<div>hash片段：{{hash}}</div><button ng-click="click(2)">修改</button>
+		<div>查询字符：{{search}}</div><button ng-click="click(3)">修改</button>
+		<div>页面路径：{{path}}</div><button ng-click="click(4)">修改</button>
+	</div>
+
+	<div ng-controller="c2">
+		<div>当前状态1：{{a}}</div>
+		<div>当前URL:{{current}}</div><hr>
+		<div>当前状态2：{{b}}</div>
+		<div>上页URL:{{previous}}</div>
+	</div>
+	
+	<script type="text/javascript">
+		var a20=angular.module('a20',[]);
+		a20.controller('c1',function($scope,$location){
+
+			//location的只读方法
+			$scope.absUrl=$location.absUrl();
+			$scope.protocol=$location.protocol();
+			$scope.host=$location.host();
+			$scope.port=$location.port();
+
+			//location的读写方法，不会立即改变URL的内容，而是聚集起来，在生命周期结束时执行
+			$scope.url=$location.url();		//如果不传参数，表示只获取，不修改
+			$scope.hash=$location.hash();
+			$scope.search=$location.search();
+			$scope.path=$location.path();
+			$scope.click=function(n){
+				switch(n){
+					case 1:$location.url("1");break;
+					case 2:$location.hash("2");break;
+					case 3:$location.search("3");break;
+					case 4:$location.path("4");break;
+				}
+
+			};
+
+			$location.replace();		//取消浏览器中的后退，主要用于避免表单的重复提交
+		});
+
+		//location的事件
+		a20.controller('c2',function($rootScope,$window,$scope,$location,$log){
+			//$locationChangeStart在URL改变之前触发，含3个参数，触发的事件的对象、当前URL、上一级URL，若首次加载，则previous为undefined
+			$rootScope.$on('$locationChangeStart',function(evt,current,previous){
+				$scope.a="URL地址即将发生改变！";
+				var yn=$window.confirm('确定要离开吗？');
+				if(yn){
+					$location.path('/change');
+					return;
+				}
+				evt.preventDefault();		//取消URL改变
+				$scope.b="用户取消改变URL！";
+				$scope.current=current;
+				$scope.previous=previous;
+				return;
+			});
+			//$locationChangeSuccess在URL改变完成后触发，参数同$locationChangeStart
+			$rootScope.$on('$locationChangeSuccess',function(evt,current,previous){
+				$scope.b="URL地址改变完成！";
+				$scope.current=current;
+				$scope.previous=previous;
+			});
+		});
+	</script>
+</body>
+</html>

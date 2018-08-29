@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="a23">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
+<script src="angular-1.6.9/angular-route.min.js" type="text/javascript"></script>
+
+</head>
+<body>
+	<div ng-controller="c1">
+		<div>
+			<input type="text" ng-model="locationpath" />
+		</div>
+		<div>{{locationpath}}</div>
+	</div>
+	<!--angular内部不支持$location对象的方法和页面中的元素进行双向绑定，因此可通过ng-model来实现，
+		并添加两个watch方法在$location更新时分别向元素和控制器发送更新的信息-->
+	<script type="text/javascript">
+		var a23=angular.module('a23',['ngRoute']);
+		a23.controller('c1',function($scope,$location){
+			$scope.$watch('locationpath',function(path){
+				$location.path(path);
+			});
+			$scope.$watch('$location.path()',function(path){
+				$scope.locationpath=path;
+			});
+		});
+	</script>
+</body>
+</html>
