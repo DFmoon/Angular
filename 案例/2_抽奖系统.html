@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html ng-app="a2">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<script type="text/javascript" src="angular.min.js"></script>
+	<style>
+		body{font-size: 13px;}
+		a:link{text-decoration: none;}
+		a:visited{text-decoration: none;}
+		#lottery{margin: 0 auto; border: solid 1px #ccc; width: 306px; text-align: center;}
+		#lottery ul{list-style-type: none; padding: 0px; margin: 20px 0px; text-align: left;}
+		#lottery ul li{border-bottom: dashed 1px #ccc; padding: 5px 0px;}
+		#lottery ul li span{float: left; padding-left: 10px;}
+		#lottery ul li .span{width: 230px;}
+		#lottery button{margin: 50px 0px; width: 100px; height: 100px;}
+		#lottery .item{width: 100px; height: 100px; border:solid 1px #ccc; text-align: center; line-height: 100px; float: left;}
+		#lottery .active{background-color: #666; border: 1px solid #ccc; color:#fff;}
+		#lottery .reset{float: left; padding-left: 10px;}
+		#lottery .edit{float: right; padding-right: 10px;}
+		#lottery .top{margin-top: 10px;}
+		#lottery .show{display: block;}
+		#lottery .hide{display: none;}
+	</style>
+</head>
+<body>
+	<div ng-controller="c1" id="lottery">
+		<!--开始页面-->
+		<div id="step1">
+			<button ng-click="start()">开始</button>
+		</div>
+		<!--正在抽奖页面-->
+		<div id="step2" class="hide">
+			<div ng-repeat="item in items" id="{{item.id}}" class="item" ng-class="{'active':item.status}">
+				{{item.name}}
+			</div>
+		</div>
+		<!--显示奖品页面-->
+		<div id="step3" class="hide top">
+			<a href="javascript:void(0)" ng-click="reset()" class="reset">重新开始</a>
+			<a href="javascript:void(0)" ng-click="edit()" class="edit">修改奖品</a>
+			<button class="active">{{result}}</button>
+		</div>
+		<!--修改奖品页面-->
+		<div id="step4" class="hide top">
+			<a href="javascript:void(0)" ng-click="return()" class="reset">返回</a>
+			<form ng-submit="add()">
+				<input type="text" ng-model="name" required placeholder="名称">
+				<input type="submit" class="btn" value="添加">
+			</form>
+			<ul>
+				<li ng-repeat="item in items">
+					<span>{{item.id}}</span>
+					<span class="span">{{item.name}}</span>
+					<a href="javascript:void(0)" ng-click="del(item.id)">删除</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+		angular.module('a2',[])
+		.controller('c1',function($scope,$timeout) {
+			//初始化奖品数据
+			$scope.items=[
+							{id:1,name:"AHC水乳套装",status:0},
+							{id:2,name:"欧莱雅小彩弹",status:0},
+							{id:3,name:"膜法世家面膜",status:0},
+							{id:4,name:"海昌护理液",status:0},
+							{id:5,name:"手撕面包",status:0},
+							{id:6,name:"大容量水杯",status:0},
+						 ];
+			$scope.result="奖品为空";
+
+			$scope.getStep=function(id){
+				return document.getElementById(id);
+			}
+			//控制四个step的显隐
+			$scope.showhide=function(pre,nex){
+				pre="step"+pre;
+				nex="step"+nex;
+				console.log(pre);
+				console.log(nex);
+				$scope.getStep(pre).style.display="none";
+				$scope.getStep(nex).style.display="block";
+			}
+			//开始抽奖
+			$scope.start=function(){
+				$scope.showhide(1,2);
+				var circle=5;		//闪烁抽奖圈数
+				var selkey=Math.floor(Math.random()*$scope.items.length);	//随机生成中奖数值
+				var next=function(key){		//根据key将对应的奖品状态设为true
+					$scope.items[key].status=true;
+					if((key-1)>=0) $scope.items[key-1].status=false;		//将选中项的前一项状态设为false
+					if(key==0) $scope.items[$scope.items.length-1].status=false;	//将items[5]，即最后一项状态设为false
+					var timer=$timeout(function(){
+						if(circle<=0&&selkey==key)		//如果闪烁圈数已用完，则显示奖品页面
+						{
+							$scope.showhide(2,3);
+							$scope.result=$scope.items[key].name;
+							return;
+						}
+						if($scope.items.length==key+1){
+							circle--;
+						}
+						if($scope.items[key+1]){
+							next(key+1);
+						}else{
+							next(0);
+						}
+					},100);
+				};
+				next(0);
+			}
+			//显示奖品
+			$scope.reset=function(){
+				$scope.showhide(3,1);
+			};
+			$scope.edit=function(){
+				$scope.showhide(3,4);
+			};
+			//修改奖品
+			$scope.add=function(){
+				var last_id=lastid();
+				$scope.items.push({id:last_id,name:$scope.name,status:0});
+			};
+			$scope.del=function(id){
+				angular.forEach($scope.items,function(value,key){
+					if(id==value.id){
+						$scope.items.splice(key,1);
+					}
+				});
+			};
+			$scope.return=function(){
+				$scope.showhide(4,3);
+			};
+			//内部函数，获取最后一项数据的ID
+			function lastid(){
+				var id=0;
+				angular.forEach($scope.items,function(value,key){
+					if(id<value.id){
+						id=value.id;
+					}
+				});
+				return ++id;
+			}
+		});
+	</script>
+</body>
+</html>
+		

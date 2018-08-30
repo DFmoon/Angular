@@ -95,12 +95,12 @@
 
 		angular.module('a2',['a1'])
 		.controller('c1',function($scope,$interval){
-			$scope.pvalue={
+			$scope.pvalue={			//定义pvalue包括两个属性，一个是数值，一个是百分比
 				label:0,
 				percentage:0.00
 			};
 			$scope.$watch('pvalue',function(newValue){
-				newValue.percentage=newValue.label*0.01;
+				newValue.percentage=newValue.label*0.01;	//设置数值和百分比之间的关系
 			},true);
 			$scope.start=function(t){
 				var i=0;
