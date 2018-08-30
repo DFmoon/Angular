@@ -36,7 +36,8 @@
 		姓名：<input type="text" ng-model="text_name" placeholder="输入姓名" /><br>
 		年龄：<input type="text" ng-model="text_age" placeholder="输入年龄" />
 		<div>{{tip}}</div>
-		<df-json a-attr="{{text_name}}" b-attr="text_age" reset="reSet()">重置</df-json>
+		<!--给指令的自定义属性分别绑定到父作用域的属性，注意绑定策略不同，绑定的方式也不同-->
+		<df-json a-attr="{{text_name}}" b-attr="text_age" reset="reSet(name)">重置</df-json>
 	</div><br>
 
 	<!--require和controller-->
@@ -123,7 +124,7 @@
 	   			restrict:'E',
 	   			compile:function(tEle,tAttrs,trans){
 							console.log('正在编译B指令');
-							return{
+							return{ 
 								pre:function(scope,iEle,iAttrs){console.log('正在执行B指令中的pre函数');},
 								post:function(scope,iEle,iAttrs){console.log('正在执行B指令中的post函数');}
 							}	   					
@@ -153,12 +154,12 @@
 	   	});
 	   	/*scope为json对象时，子作用域和父作用域完全独立，子作用域若要添加属性，须通过link属性中函数的scope对象实现；
 	   	若要在子作用域中绑定或调用父作用域的属性及方法，则应在json对象中添加绑定策略。
-	   	绑定策略：1.@绑定：子作用域重置属性前后，父作用域的变量会影响子作用域，而反之则不会，和scope：true的区别；
-	   			 2.=绑定：父子同步，完全共享；
+	   	绑定策略：1.@绑定：绑定字符串，子作用域重置属性前后，父作用域的变量会影响子作用域，而反之则不会，和scope：true的区别；
+	   			 2.=绑定：双向绑定，父子同步，完全共享；
 	   			 3.&绑定：在独立的子作用域中直接调用父作用域的方法，避免重复编码*/
 	   	a19.controller('c2',function($scope){
-	   		$scope.reSet=function(){
-	   			$scope.tip="姓名和年龄重置成功";
+	   		$scope.reSet=function(name){
+	   			$scope.tip=name+"姓名和年龄重置成功";
 	   		}
 	   	}).directive('dfJson',function(){
 	   		return{
@@ -169,7 +170,7 @@
 	   			link:function(scope,iEle,iAttrs){
 	   					iEle.bind('click',function(){
 	   						scope.$apply(function(){
-	   							scope.reSet();
+	   							scope.reSet({name:"ss"});
 	   							scope.name='aa';
 	   							scope.age='32';
 	   						});
