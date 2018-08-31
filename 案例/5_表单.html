@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="a5">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<script type="text/javascript" src="angular.min.js"></script>
+	<style>
+		
+	</style>
+</head>
+<body>
+	<!--表单验证-->
+	<div ng-controller="c1">
+		<form action="" name="sdf">
+			姓名：
+			<input type="text" name="name" ng-model="name" required ng-minlength="4" ng-maxlength="10" /><br>
+			<span ng-show="sdf.name.$error.required">用户名不能为空</span><br>
+			<span ng-show="sdf.name.$error.minlength">用户名不能少于4个字符</span><br>
+			<span ng-show="sdf.name.$error.maxlength">用户名不能大于10个字符</span><br>
+			电话：
+			<input type="number" name="phone" ng-model="phone" required /><br>
+			<span ng-show="sdf.phone.$error.required">电话不能为空</span><br>
+			密码：
+			<input type="password" /><br>
+			<input type="submit" ng-disabled="sdf.$invalid" value="提交" /><br>
+		</form>
+		
+	</div>
+	<script type="text/javascript">
+		angular.module('a5',[])
+		.controller('c1',function($scope) {
+			
+		})
+	</script>
+</body>
+</html>
