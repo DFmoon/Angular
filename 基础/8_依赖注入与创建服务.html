@@ -20,7 +20,8 @@
         <button ng-click="onClick(5)">morning</button>
         <button ng-click="onClick(6)">noon</button>
         <button ng-click="onClick(7)">afternoon</button>
-        <button ng-click="onClick(8)">evening</button>
+        <button ng-click="onClick(8)">night</button>
+        <button ng-click="onClick(9)">evening</button>
     </div>
 	<script type="text/javascript">
 		var a8=angular.module('a8',[]);
@@ -48,23 +49,28 @@
 			});
 		});
 		<!--创建服务的第二种方法：直接调用模块的方法定义服务-->
-		a8.factory('$show5',function(){
+		a8.provider('$show5',function(){
+			this.$get=function(){			//provider中必须使用get函数
+				return{val:function(s){return s;}}
+			};
+		});
+		a8.factory('$show6',function(){
 			return{val:function(s){return s;}}
 		});
-		a8.service('$show6',function(){		//service接收的是一个构造函数
+		a8.service('$show7',function(){		//service接收的是一个构造函数
 			this.val=function(s){
 				return s;
 			}
 		});
-		a8.constant('$show7',{				//常用于返回常量
-			s:"good afternoon！"
+		a8.constant('$show8',{				//常用于返回常量
+			s:"good night！"
 		});
-		a8.value('$show8',{					//常用于返回常量
+		a8.value('$show9',{					//常用于返回常量
 			s:"good evening！"
-		})
+		});
 		/*通过config函数的$controllerProvider服务的register方法来创建控制器，这是a8.controller(...)的执行本质*/
 		a8.config(function($controllerProvider){
-			$controllerProvider.register('c8_1',function($scope,$show1,$show2,$show3,$show4,$show5,$show6,$show7,$show8){	//将定义好的对象变量作为依赖注入变量调用
+			$controllerProvider.register('c8_1',function($scope,$show1,$show2,$show3,$show4,$show5,$show6,$show7,$show8,$show9){	//将定义好的对象变量作为依赖注入变量调用
 				$scope.cls="";
 				$scope.onClick=function(t){
 					$scope.cls="show";
@@ -76,9 +82,10 @@
 						case 4:$scope.text=$show4.val("晚上好！");break;
 						case 5:$scope.text=$show5.val("good morning！");break;
 						case 6:$scope.text=$show6.val("good noon！");break;
-						case 7:$scope.text=$show7.s;break;
+						case 7:$scope.text=$show7.val("good afternoon！");break;
 						case 8:$scope.text=$show8.s;break;
-					}
+						case 9:$scope.text=$show9.s;break;
+					} 
 				};
 			});
 		});
