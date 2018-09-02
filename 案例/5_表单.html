@@ -5,31 +5,87 @@
 	<title></title>
 	<script type="text/javascript" src="angular.min.js"></script>
 	<style>
-		
+		.sdf{position: relative; float:left; margin-left: 40%; margin-top: 80px; font-size: 18px; width: 300px; }
+		h2{position: relative;text-align: center;}
+		.name{position: relative; height: 50px;}
+		.name label{position: absolute; left: 0px; top:0px;}
+		.name input{position: absolute; left: 100px;top: 3px;}
+		.name span{position: absolute; top: 5px; left: 300px; width:400px; font-size: 14px; color:#ccc;}
+		.err{border: 1px solid #a10;}
+		.phone{position: relative; height: 50px;}
+		.phone label{position: absolute; left: 0px; top:0px;}
+		.phone input{position: absolute; left: 100px;top: 3px;}
+		.phone span{position: absolute; top: 5px; left: 300px; width:400px; font-size: 14px; color:#ccc;}
+		.pass{position: relative; height: 50px;}
+		.pass label{position: absolute; left: 0px; top:0px; width: 100px;}
+		.pass input{position: absolute; left: 100px;top: 3px;}
+		.pass span{position: absolute; top: 5px; left: 300px; width:400px; font-size: 14px; color:#ccc;}
+		.submit{width: 60px; height: 30px; text-align: center; font-size: 16px; text-align: 30px;}
 	</style>
 </head>
 <body>
 	<!--表单验证-->
-	<div ng-controller="c1">
-		<form action="" name="sdf">
-			姓名：
-			<input type="text" name="name" ng-model="name" required ng-minlength="4" ng-maxlength="10" /><br>
-			<span ng-show="sdf.name.$error.required">用户名不能为空</span><br>
-			<span ng-show="sdf.name.$error.minlength">用户名不能少于4个字符</span><br>
-			<span ng-show="sdf.name.$error.maxlength">用户名不能大于10个字符</span><br>
-			电话：
-			<input type="number" name="phone" ng-model="phone" required /><br>
-			<span ng-show="sdf.phone.$error.required">电话不能为空</span><br>
-			密码：
-			<input type="password" /><br>
-			<input type="submit" ng-disabled="sdf.$invalid" value="提交" /><br>
+	<div class="sdf" ng-controller="c1">
+		<h2>注册</h2>
+		<form action="" method="post" name="sdf" ng-submit="sdfSubmit()">
+			<div class="name">
+				<label for="">姓名：</label>
+				<input type="text" name="name" ng-model="userData.name" required ng-minlength="4" ng-maxlength="10"
+					   ng-class="{'err':sdf.name.$invalid && sdf.name.$touched}" /><br>
+				<!--以下的三条验证语句效果相同-->
+				<span ng-show="sdf.name.$error.required && sdf.name.$touched">用户名不能为空</span><br>
+				<span ng-if="sdf.name.$error.minlength && sdf.name.$touched">用户名不能少于4个字符</span><br>
+				<span ng-if="sdf.name.$error.maxlength && sdf.name.$touched">用户名不能大于10个字符</span><br>
+			</div>
+			<div class="phone">
+				<label for="">电话：</label>
+				<input type="number" name="phone" ng-model="userData.phone" required 
+					   ng-class="{'err':sdf.phone.$invalid && sdf.phone.$touched}"/><br>
+				<span ng-show="sdf.phone.$error.required && sdf.phone.$touched">电话不能为空</span><br>
+			</div>
+			<div class="pass">
+				<label for="">密码：</label>
+				<input name="pass" type="password" ng-model="userData.pass" required ng-minlength="6" ng-maxlength="12"
+					   ng-class="{'err':sdf.pass.$invalid && sdf.pass.$touched}"/><br>
+				<span ng-if="sdf.pass.$error.required && sdf.pass.$touched">密码不能为空</span><br>
+				<span ng-if="sdf.pass.$error.minlength && sdf.pass.$touched">密码不能少于6个字符</span><br>
+				<span ng-if="sdf.pass.$error.maxlength && sdf.pass.$touched">密码不能大于12个字符</span><br>
+			</div>
+			<div class="pass">
+				<label for="">确认密码：</label>
+				<input name="pass2" type="password" ng-model="userData.pass2" pass="userData.pass" compare required
+					   ng-class="{'err':sdf.pass2.$invalid && sdf.pass2.$touched}" /><br>
+				<span ng-if="sdf.pass2.$error.compare && sdf.pass.$touched">两次密码输入不一致</span><br>
+			</div>
+			<input class="submit" type="submit" ng-disabled="sdf.$invalid" value="提交" /><br>
 		</form>
 		
 	</div>
 	<script type="text/javascript">
 		angular.module('a5',[])
 		.controller('c1',function($scope) {
-			
+			$scope.userData={};
+			$scope.sdfSubmit=function(){
+				console.log("表单提交啦！");
+			}
+		})
+		.directive('compare',function(){
+			return{
+				restrict:'AE',
+				scope:{pass:'=pass'},
+				require:'ngModel',
+				link:function(scope,ele,attr,con){
+						con.$validators.compare=function(pass2){
+							return pass2==scope.pass;
+						};
+						//内部directive无法通过scope原形链访问外部directive的scope内容，
+						//所以这里的第一个参数如果采用字符串参数'scope.pass'，scope.$watch监听不到，
+						//字符串参数只能监听在当前scope里执行这个expression的结果
+						scope.$watch(function(){return scope.pass},function(){
+							con.$validate();
+						})
+					},
+			}
 		})
 	</script>
 </body>
