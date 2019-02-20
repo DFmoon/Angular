@@ -32,7 +32,7 @@
             	ng-class-even="'even'"
             	ng-repeat="stu in data"
                 ng-click='li_click($index)'
-                ng-class='{focus:$index==focus}'>
+                ng-class='{focus:$index==focus}'>   <!--"$index==focus"的返回值为true-->
             	<span>{{$index+1}}</span>
                 <span>{{stu.name}}</span>
                 <span>{{stu.sex}}</span>

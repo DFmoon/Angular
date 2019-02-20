@@ -30,7 +30,7 @@
             <!--
             <li ng-repeat="stu in data|orderBy:'-score'|limitTo:3|filter:findscore" ng-class-odd="'odd'" ng-class-even="'even'">
             -->
-            <li ng-repeat="stu in data | young:1" ng-class-odd="'odd'" ng-class-even="'even'">
+            <li ng-repeat="stu in data | young:0" ng-class-odd="'odd'" ng-class-even="'even'">
              <!--自定义过滤器young，并传入参数1-->
             	<span>{{$index+1}}</span>
                 <span>{{stu.name}}</span>
@@ -51,7 +51,7 @@
 				return e.score>85&&e.score<93;
 			};
 		}]);
-		<!--自定义过滤器，调用过滤器时会自动将数据注入参数e，参数type接收调用时传递过来的实参-->
+		<!--自定义过滤器，调用过滤器时会自动将数据注入参数e，参数type接收调用时传递过来的实参(0或1)-->
 		a7.filter('young',function(){
 			return function(e,type){
 				var _out=[];

@@ -56,7 +56,7 @@
 
 	<script type="text/ng-template" id=tp2>
 		<div>{{message}}</div>
-		<button ng-transclude></button><br>
+		<button ng-transclude></button><br>		<!--ng-transclude表示将原有内容，即“固定”放在该标签内-->
 	</script>
 
 	<script type="text/ng-template" id="tp3">
@@ -90,8 +90,7 @@
 	   			templateUrl:'tp1',	//指定一个script元素作为模板页
 	   			replace:true,		//默认为false，该属性为true时，表示用模板中的内容替换指令标记！！！
 	   			transclude:true,	//默认为false，设置为true后，可通过ng-transclude指令用原有内容替换指令，即实现反替换
-	   			/*link属性的值是一个函数，scope为指令所在的作用域，IEle包含了元素操作的API，相当于压缩版的jQuery，用法同jQuery，
-	   			iAttrs表示指令元素的属性集合。*/
+	   			/*link属性的值是一个函数，可操作DOM，scope为指令所在的作用域，IEle包含了元素操作的API，相当于压缩版的jQuery，用法同jQuery，iAttrs表示指令元素的属性集合。*/
 	   			link:function(scope,iEle,iAttrs){
 	   					iEle.bind('click',function(){	//给当前的元素，即替换原有内容后的script元素绑定一个事件
 	   						scope.$apply(function(){	//$apply用于执行完这一方法中的函数后重新渲染页面视图，将content显示出来
@@ -105,7 +104,7 @@
 
 	   	//compile
 	   	/*conpile属性返回一个函数或一个对象，返回函数时，函数名为post，返回对象时，包含pre和post两个方法函数,
-	   	compile执行的顺序：父元素compile，子元素compile，父元素pre，子元素pre，父元素post，子元素post*/
+	   	compile执行的顺序：父元素compile，子元素compile，父元素pre，子元素pre，子元素post，父元素post*/
 	   	a19.controller('c1',function($scope){
 	   		$scope.tip="跟踪compile的执行过程";
 	   	}).directive('dfA',function(){
@@ -134,9 +133,8 @@
 
 	   	//scope
 	   	/*scope有两种类型，一种是布尔值，一种是json对象。*/
-	   	/*scope为布尔值时，默认为false，为true时表明创建了一个独立的子作用域，独立是指父作用域的变量会影响子作用域，而反之则不会，
-	   	但如果某一属性，这里是message的值，被子作用域重置了，则父作用域就不能再影响它的内容了。
-	   	该属性可避免指令中局部作用于对于全局作用域或外部作用域的污染，若一个元素中绑定了多个拥有子作用域的指令，则只有指令模板中的根元素才能获取新的作用域（子作用域为指令中的作用域，父作用域为指令元素所在的作用域）*/
+	   	/*scope为布尔值时，默认为false，为true时表明创建了一个独立的子作用域，独立是指父作用域的变量会影响子作用域，而反之则不会，但如果某一属性，这里是message的值，被子作用域重置了，则父作用域就不能再影响它的内容了。
+	   	该属性可避免指令中局部作用域对于全局作用域或外部作用域的污染，若一个元素中绑定了多个拥有子作用域的指令，则只有指令模板中的根元素才能获取新的作用域（子作用域为指令中的作用域，父作用域为指令元素所在的作用域）*/
 	   	a19.directive('dfMessage',function(){
 	   		return{
 	   			restrict:'E',
@@ -180,6 +178,7 @@
 	   	});
 
 	   	//require和controller
+	   	//require向本身和外层元素寻找指令，controller的值为构造函数，创建父元素指令
 	   	/*以下两个属性结合使用，连通父、子作用域，用于多个指令元素的嵌套。*/
 	   	a19.directive('dfChild',function(){
 	   		return{
@@ -194,8 +193,8 @@
 	   		return{
 	   			restrict:"EAC",
 	   			controller:function($scope,$compile,$http){
+	   				$scope.p="今天天气真好！";				//给自身的P属性赋值
 					this.addChild=function(cscope){			//构造函数中接收来自子元素指令的scope对象
-						$scope.p="今天天气真好！";			//给自身的P属性赋值
 						$scope.click=function(){			//click函数中调用子元素指令的c属性
 							$scope.temp=$scope.p;
 							$scope.p=cscope.c;

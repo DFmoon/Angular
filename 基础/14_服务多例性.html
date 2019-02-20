@@ -23,21 +23,21 @@
         <div class="show">分数：{{stu.score}}</div>
     </div>
     <script type="text/javascript">
-		function student(json){			//定义student对象，通过传入的json参数调用angular中的extend方法初始化对象属性
-			angular.extend(this,json);
+		function student(json){			//student对象的构造函数，接收json参数
+			angular.extend(this,json);	//将json的第一层属性拷贝到student对象的第一层属性，即初始化了student对象
 			this.reset=function(){
 				this.code=1000;
 				this.name="aa";
 				this.score=0;
 			};
 		}
-		student.create=function(){		//添加create方法，用于创建新的student对象，并在实例中重置自己的内容
+		function create(){		//调用student构造函数，创建一个student对象并传入json初始化
 			return new student({code:1001,name:"bb",score:98});
 		};
 		angular.module('a14',[])
-			.factory('$student',function(){return{create:student.create}})	//创建名为$student的服务,并返回create函数
+			.factory('$student',function(){return{create:create}})	//创建名为$student的服务,并返回create函数
 			.controller('c14_1',function($scope,$student){
-				$scope.stu=$student.create();		//得到的是一个student对象
+				$scope.stu=$student.create();		//得到的是一个student对象,其中也包含了reset函数
 				$scope.reset=function(){$scope.stu.reset();};
 			})
 			.controller('c14_2',function($scope,$student){$scope.stu=$student.create();});

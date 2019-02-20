@@ -70,11 +70,11 @@
 		});
 		/*通过config函数的$controllerProvider服务的register方法来创建控制器，这是a8.controller(...)的执行本质*/
 		a8.config(function($controllerProvider){
-			$controllerProvider.register('c8_1',function($scope,$show1,$show2,$show3,$show4,$show5,$show6,$show7,$show8,$show9){	//将定义好的对象变量作为依赖注入变量调用
+			$controllerProvider.register('c8_1',function($scope,$show1,$show2,$show3,$show4,$show5,$show6,$show7,$show8,$show9){	//将定义好的服务作为依赖注入，自定义的服务放在后面
 				$scope.cls="";
 				$scope.onClick=function(t){
 					$scope.cls="show";
-					angular.extend($show7,{s:'afternoon'});	//constant和value方法创建的服务在注入控制器后可用该方法重置值
+					angular.extend($show8,{s:'afternoon'});	//constant和value方法创建的服务在注入控制器后可用该方法重置值
 					switch(t){
 						case 1:$scope.text=$show1.val("早上好！");break;
 						case 2:$scope.text=$show2.val("上午好！");break;

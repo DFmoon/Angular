@@ -17,7 +17,7 @@
     <script type="text/javascript">
 		var a17=angular.module('a17',[]);
 		a17.service("cache",function($cacheFactory){		//创建一个返回缓存对象的服务
-			return $cacheFactory("test");
+			return $cacheFactory();
 			})
 			.controller("c1",function($scope,cache){
 				$scope.cset=function(){cache.put("mytest",$scope.cname);}	//添加key为mytest的缓存
