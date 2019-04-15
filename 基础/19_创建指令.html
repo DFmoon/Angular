@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="a19">
 <head>
-<meta charset=utf-8" />
+<meta charset="utf-8" />
 <title>创建指令</title>
 <script src="angular-1.6.9/angular.min.js" type="text/javascript"></script>
 </head>
@@ -90,6 +90,7 @@
 	   			templateUrl:'tp1',	//指定一个script元素作为模板页
 	   			replace:true,		//默认为false，该属性为true时，表示用模板中的内容替换指令标记！！！
 	   			transclude:true,	//默认为false，设置为true后，可通过ng-transclude指令用原有内容替换指令，即实现反替换
+	   			
 	   			/*link属性的值是一个函数，可操作DOM，scope为指令所在的作用域，IEle包含了元素操作的API，相当于压缩版的jQuery，用法同jQuery，iAttrs表示指令元素的属性集合。*/
 	   			link:function(scope,iEle,iAttrs){
 	   					iEle.bind('click',function(){	//给当前的元素，即替换原有内容后的script元素绑定一个事件
@@ -126,7 +127,7 @@
 							return{ 
 								pre:function(scope,iEle,iAttrs){console.log('正在执行B指令中的pre函数');},
 								post:function(scope,iEle,iAttrs){console.log('正在执行B指令中的post函数');}
-							}	   					
+							}
 	   					}
 	   		};
 	   	})

@@ -19,9 +19,9 @@
 			$scope.log=function(){
 				console.log('动态添加方法');
 			};
-			var html="<div ng-click='log()'>{{hello}}</div>";
+			var html="<div ng-click='log()'>{{hello}}</div>";		//字符串
 			var template=angular.element(html);			//得到的template是一个jQuery对象
-			var newHtml=$compile(template)($scope);		//编译jQuery对象
+			var newHtml=$compile(template)($scope);		//编译jQuery对象，得到DOM节点
 			$scope.add=function(){
 				angular.element(document.getElementById('ctrl')).append(newHtml);
 			};

@@ -7,6 +7,7 @@
 </head>
 <body>
 	<!--event.propagation-->
+	<!--冒泡：从触发元素传递到父元素直至Window-->
 	<div ng-controller="c1">
 		<div ng-click="click('父级',$event)">
 			在按钮的单击事件中阻止冒泡现象

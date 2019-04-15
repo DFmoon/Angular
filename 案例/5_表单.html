@@ -32,6 +32,7 @@
 				<label for="">姓名：</label>
 				<input type="text" name="name" ng-model="userData.name" required ng-minlength="4" ng-maxlength="10"
 					   ng-class="{'err':sdf.name.$invalid && sdf.name.$touched}" /><br>
+				<!--若没有ng-model="userData.name"，验证不起作用-->
 				<!--以下的三条验证语句效果相同-->
 				<span ng-show="sdf.name.$error.required && sdf.name.$touched">用户名不能为空</span><br>
 				<span ng-if="sdf.name.$error.minlength && sdf.name.$touched">用户名不能少于4个字符</span><br>
@@ -53,8 +54,9 @@
 			</div>
 			<div class="pass">
 				<label for="">确认密码：</label>
-				<input name="pass2" type="password" ng-model="userData.pass2" pass="userData.pass" compare required
+				<input name="pass2" type="password" ng-model="userData.pass2" pass1="userData.pass" compare required
 					   ng-class="{'err':sdf.pass2.$invalid && sdf.pass2.$touched}" /><br>
+				<!--注意此处的$touched检查的是第一个密码框，因为从输入第一个密码开始就开启了一致性的检验-->
 				<span ng-if="sdf.pass2.$error.compare && sdf.pass.$touched">两次密码输入不一致</span><br>
 			</div>
 			<input class="submit" type="submit" ng-disabled="sdf.$invalid" value="提交" /><br>
@@ -72,16 +74,16 @@
 		.directive('compare',function(){
 			return{
 				restrict:'AE',
-				scope:{pass:'=pass'},
+				scope:{pass:'=pass1'},		//和第一次输入的密码绑定
 				require:'ngModel',
 				link:function(scope,ele,attr,con){
-						con.$validators.compare=function(pass2){
-							return pass2==scope.pass;
+						con.$validators.compare=function(v){
+							return v==scope.pass;
 						};
 						//内部directive无法通过scope原形链访问外部directive的scope内容，
 						//所以这里的第一个参数如果采用字符串参数'scope.pass'，scope.$watch监听不到，
 						//字符串参数只能监听在当前scope里执行这个expression的结果
-						scope.$watch(function(){return scope.pass},function(){
+						scope.$watch("pass",function(){
 							con.$validate();
 						})
 					},
